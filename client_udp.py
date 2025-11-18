@@ -1,41 +1,41 @@
-import socket
-import threading
+import socket #bilbioteca utilizada para comunicação entre computadores
+import threading #biblioteca utilizada para executar multiplas tarefas ao mesmo tempo
 
-host = '192.168.1.109'
-porta = 5000
+host = '192.168.1.109' #ip do servidor que o cliente vai se conectar
+porta = 5000 #porta do servidor que o cliente vai se conectar
 
-nome = "cliente_udp"
+nome = "cliente_udp" #nome padrão do cliente
 
-cliente = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+cliente = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #cria um socket tcp
+cliente.sendto(nome.encode(), (host, porta)) #conecta o socket tcp no host e porta especificados
 
-cliente.sendto(nome.encode(), (host, porta))
+def receber(): #serve para receber mensagens dos servidor
+    while True: #cria um loop infinito
+        try: #tenta realizar o bloco
+            data, ender = cliente.recvfrom(1024) #recebe mensagens de ate 1024 bytes
+            print(data.decode()) #printa a mensagem recebida já decodificada byte -> string 
+        
+        except: #se não conseguir realizar o bloco cai aqui
+            break #finaliza o loop
 
-def receber():
-    while True:
-        try:
-            data, _ = cliente.recvfrom(1024)
-            print(data.decode())
-        except:
-            break
+thread = threading.Thread(target=receber) #cria a thread que vai executar a função receber
+thread.daemon = True # define a thread como daemon que vai parar automaticamente quando o programa principal terminar
+thread.start() #inicia a thread
 
-thread = threading.Thread(target=receber)
-thread.daemon = True
-thread.start()
+while True: #inicia o loop
+    mensagem = input('digite uma mensagem: ') #pede para digitar uma mensagem
 
-while True:
-    mensagem = input('digite uma mensagem: ')
+    if mensagem.startswith("/nick "): #verifica se a mensagem começa com /nick
+        nome = mensagem.split(" ", 1)[1] #atualiza o nome do cliente para o nick inserido
+        print("nome alterado para: ", nome) #mostra para qual nick o nome foi alterado
+        cliente.sendto(nome.encode(), (host, porta)) #envia a mensagem codificada para oservidor
 
-    if mensagem.startswith("/nick "):
-        nome = mensagem.split(" ", 1)[1]
-        print("nome alterado para: ", nome)
-        cliente.sendto(nome.encode(), (host, porta))
+    elif mensagem == "/sair": #se a mensagem for igual a /sair
+        cliente.sendto(f"{nome} saiu do servidor".encode(), (host, porta)) #envia a mensagem para o servidor dizendo que o cliente saiu
+        break #finaliza o loop saindo do servidor
 
-    elif mensagem == "/sair":
-        cliente.sendto(f"{nome} saiu do servidor".encode(), (host, porta))
-        break
+    else: #se não
+        cliente.sendto(f"{nome}: {mensagem}".encode(), (host, porta)) #envia a mensagem para o servidor
 
-    else:
-        cliente.sendto(f"{nome}: {mensagem}".encode(), (host, porta))
-
-print("fechando conexão")
-cliente.close()
+cliente.close() #encerra o socket tcp
+print("fechando conexão") #sai do servidor
