@@ -1,43 +1,43 @@
-import socket
-import threading
+import socket #bilbioteca utilizada para comunicação entre computadores
+import threading #biblioteca utilizada para executar multiplas tarefas ao mesmo tempo
 
-host = '192.168.1.109'  
-porta = 5000
+host = '192.168.1.109' #ip do servidor que o cliente vai se conectar
+porta = 5000 #porta do servidor que o cliente vai se conectar
 
-nome = "cliente_tcp"
+nome = "cliente_tcp" #nome padrão do cliente
 
-metodoSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-metodoSocket.connect((host, porta))
+metodoSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #cria um socket tcp
+metodoSocket.connect((host, porta)) #conecta o socket tcp no host e porta especificados
 
-def receber():
-    while True:
-        try:
-            data = metodoSocket.recv(1024)
-            if not data:
-                print("servidor desconectado.")
-                break
-            print(data.decode())
+def receber(): #serve para receber mensagens dos servidor
+    while True: #cria um loop infinito
+        try: #tenta realizar o bloco
+            data = metodoSocket.recv(1024) #recebe mensagens de ate 1024 bytes 
+            if not data: #se não receber nada
+                print("servidor desconectado") #desconecta do servidor
+                break #finaliza o loop
+            print(data.decode()) #printa a mensagem recebida já decodificada byte -> string
 
-        except:
-            break
+        except: #se não conseguir realizar o bloco cai aqui
+            break #finaliza o codigo
 
-thread = threading.Thread(target=receber)
-thread.daemon = True
-thread.start()
+thread = threading.Thread(target=receber) #cria a thread que vai executar a função receber
+thread.daemon = True # define a thread como daemon que vai parar automaticamente quando o programa principal terminar
+thread.start() #inicia a thread
 
-while True:
-    mensagem = input('digite uma mensagem:')
+while True: #inicia o loop
+    mensagem = input('digite uma mensagem:') #pede para digitar uma mensagem
 
-    if mensagem.startswith("/nick "):
-        nome = mensagem.split(" ", 1)[1]
-        print("nome alterado para: ", nome)
+    if mensagem.startswith("/nick "): #verifica se a mensagem começa com /nick
+        nome = mensagem.split(" ", 1)[1] #atualiza o nome do cliente para o nick inserido
+        print("nome alterado para: ", nome) #mostra para qual nick o nome foi alterado
 
-    elif mensagem == "/sair":
-        metodoSocket.send(f"{nome} saiu do servidor".encode())
-        break
+    elif mensagem == "/sair": #se a mensagem for igual a /sair
+        metodoSocket.send(f"{nome} saiu do servidor".encode()) #envia a mensagem para o servidor dizendo que o cliente saiu
+        break #finaliza o loop saindo do servidor
 
-    else:
-        metodoSocket.send(f"{nome}: {mensagem}".encode())
+    else: #se não
+        metodoSocket.send(f"{nome}: {mensagem}".encode()) #envia a mensagem para o servidor
 
-metodoSocket.close()
-print("fechando conexão")
+metodoSocket.close() #encerra o socket tcp
+print("fechando conexão") #sai do servidor
