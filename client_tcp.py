@@ -26,7 +26,7 @@ thread.daemon = True # define a thread como daemon que vai parar automaticamente
 thread.start() #inicia a thread
 
 while True: #inicia o loop
-    mensagem = input('digite uma mensagem:') #pede para digitar uma mensagem
+    mensagem = input('digite uma mensagem: ') #pede para digitar uma mensagem
 
     if mensagem.startswith("/nick "): #verifica se a mensagem começa com /nick
         nome = mensagem.split(" ", 1)[1] #atualiza o nome do cliente para o nick inserido
