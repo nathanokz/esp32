@@ -1,6 +1,6 @@
 import socket #bilbioteca utilizada para comunicação entre computadores
 
-host = '192.168.1.109' #ip do servidor
+host = '192.168.1.105' #ip do servidor
 porta = 5000 #porta do servidor 
 
 clientes = {} #cria um dicionario de clientes
@@ -19,7 +19,7 @@ while True: #inicia o loop
         print(f"novo cliente: {mensagem} - {ender}") #printa que um cliente se conectou
         for cliente_ender in clientes: #percorre todos os clientes do dicionario
             if cliente_ender != ender: #evita mandar a mensagem de entrada para o cliente para o proprio cliente
-                server.sendto(f"Servidor: {mensagem} entrou no chat.".encode(), cliente_ender) #envia uma mensagem de boas vindas
+                server.sendto(f"servidor: {mensagem} entrou no chat.".encode(), cliente_ender) #envia uma mensagem de boas vindas
         continue #espera pela proxima mensagem
 
     nome = clientes[ender] #pega o nome do cliente do dicionario
