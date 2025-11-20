@@ -1,7 +1,7 @@
 import socket #bilbioteca utilizada para comunicação entre computadores
 import threading #biblioteca utilizada para executar multiplas tarefas ao mesmo tempo
 
-host = '192.168.1.109' #ip do servidor
+host = '192.168.1.105' #ip do servidor
 porta = 5000 #porta do servidor 
 
 clientes = [] #lista de clientes conectados
@@ -13,7 +13,7 @@ def cliente(conn, ender): #função para comunicação com o cliente
             data = conn.recv(1024) #recebe mensagens de ate 1024 bytes 
             if not data: #se não receber nada
                 break #finaliza o loop
-            print("cliente:", ender, " mensagem:", data.decode()) #printa as informações do cliente ja decodificada byte -> string
+            print("cliente mensagem:", data.decode()) #printa as informações do cliente ja decodificada byte -> string
             conn.sendall(data) #envia de volta para o cliente
         
         except: #se não conseguir realizar o bloco cai aqui
@@ -32,7 +32,6 @@ print('aguardando conexão do cliente...') #printa enquando aguarda alguem se co
 while True: #inicia o loop
     conn, ender = metodoSocket.accept() #aceita a conexão tcp do cliente
     clientes.append(conn) #acumula o cliente dentro da lista clientes
-    print('conectado em: ', ender) #informa o endereço do cliente esta conectado
 
     thread = threading.Thread(target=cliente, args=(conn, ender)) #cria a thread que vai executar a função cliente
     thread.start() #inicia a thread
